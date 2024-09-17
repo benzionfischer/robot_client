@@ -6,9 +6,8 @@ import CameraStream from './CameraStream'; // New component
 const App = () => {
   return (
     <div>
-      <h1>Dashboard</h1>
-      <RobotControl />
-      <CameraStream />
+        <RobotControl />
+        <CameraStream />
     </div>
   );
 };
