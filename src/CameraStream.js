@@ -16,7 +16,7 @@ const CameraStream = () => {
       <div style={{ width: '100%', maxWidth: '900px' }}>
         <h2 style={{ textAlign: 'center' }}>Camera Stream</h2>
         <img
-          src="http://localhost:5001/video_feed"
+          src="http://robot.local:5001/video_feed"
           alt="Camera Feed"
           style={{
             width: '100%',          // Set the width to take the full available width of the parent
