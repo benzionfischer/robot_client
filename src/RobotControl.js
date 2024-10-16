@@ -10,7 +10,7 @@ const RobotControl = () => {
   const socketRef = useRef(null); // Use ref to persist socket between renders
 
   useEffect(() => {
-    const socket = io('ws://localhost:8080'); // Establish WebSocket connection once
+    const socket = io('ws://robot.local:8080'); // Establish WebSocket connection once
 
     socket.on('connect', () => {
       console.log('Connected to WebSocket via Socket.IO');
@@ -40,7 +40,18 @@ const RobotControl = () => {
     if (socketRef.current) { // Use the socket from ref
       const data = { left_velocity: left, right_velocity: right };
       socketRef.current.emit('control', data); // Use socket from ref directly
-      console.log("sent successfully");
+      console.log("sent velocity:", data);
+    } else {
+      console.error('Socket.IO is not open');
+      setStatusMessage("Socket.IO not open");
+    }
+  };
+
+  const sendControlCommand = (side, vertical) => {
+    if (socketRef.current) {
+      const data = { side, vertical };
+      socketRef.current.emit('control_camera', data); // Emit control_camera event
+      console.log("sent control command:", data);
     } else {
       console.error('Socket.IO is not open');
       setStatusMessage("Socket.IO not open");
@@ -50,10 +61,23 @@ const RobotControl = () => {
   const updateVelocity = (newKeys) => {
     let newLeftVelocity = 0;
     let newRightVelocity = 0;
+    let side = 0; // Initialize side variable
+    let vertical = 0; // Initialize vertical variable
+
+    // Handle W, S, and arrow keys for velocity
     if (newKeys.has('w')) newLeftVelocity = 100;
     if (newKeys.has('s')) newLeftVelocity = -100;
     if (newKeys.has('arrowup')) newRightVelocity = 100;
     if (newKeys.has('arrowdown')) newRightVelocity = -100;
+
+    // Handle keypad keys for side and vertical movement
+    if (newKeys.has('8')) vertical = -10; // Up
+    if (newKeys.has('2')) vertical = 10; // Down
+    if (newKeys.has('4')) side = 10; // Left
+    if (newKeys.has('6')) side = -10; // Right
+
+    // Send control commands for side and vertical
+    sendControlCommand(side, vertical);
 
     setLeftVelocity(newLeftVelocity);
     setRightVelocity(newRightVelocity);
